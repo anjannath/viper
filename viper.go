@@ -1216,6 +1216,19 @@ func (v *Viper) Set(key string, value interface{}) {
 	deepestMap[lastKey] = value
 }
 
+func Unset(key string) { v.Unset(key) }
+func (v *Viper) Unset(key string) {
+	key = v.realKey(strings.ToLower(key))
+	value = toCaseInsensitiveValue(value)
+
+	path := strings.Split(key, v.keyDelim)
+	lastKey := strings.ToLower(path[len(path)-1])
+	deepestMap := deepSearch(v.override, path[0:len(path)-1])
+
+	// unset innermost value
+	deepestMap[lastKey] = nil
+}
+
 // ReadInConfig will discover and load the configuration file from disk
 // and key/value stores, searching in one of the defined paths.
 func ReadInConfig() error { return v.ReadInConfig() }
